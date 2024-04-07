@@ -8,8 +8,8 @@ const jwt = require('jsonwebtoken');
 // Signature:
 const JWT_SECRET = "Iam$Foxy"
 
-// Create a User using: POST "/api/auth/user" . Doesn't require authentication
-router.post('/user', [
+// ROUTE 1: Create a User using: POST "/api/auth/createuser" . Doesn't require authentication
+router.post('/createuser', [
         body('name', 'Enter valid name').notEmpty().isLength({ min: 3}),
         body('email', 'Enter valid email address').notEmpty().isEmail(),
         body('password', 'Enter password minimum 5 characters').notEmpty().isLength({ min: 5})
@@ -47,7 +47,6 @@ router.post('/user', [
         } 
         const authToken = jwt.sign(data, JWT_SECRET);
         res.json({authToken});
-        // res.json(user);
 
     } catch(error) {
         console.error(error.message);
@@ -55,5 +54,54 @@ router.post('/user', [
     }
 
 })
+
+
+// ROUTE 2: Create a login using: POST "/api/auth/loginuser" . Doesn't require authentication
+router.post('/loginuser', [
+    body('email', 'Enter valid email address').notEmpty().isEmail(),
+    body('password', 'Enter password minimum 5 characters').notEmpty().isLength({ min: 5})
+],  async (req, res) => {
+    
+    // If there are errors, Return bad request:
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        return res.status(400).json({error: errors.array() }); 
+    }
+
+    // decrypt email and password
+    const {email, password} = req.body;
+    
+    try{
+        // check email:
+        let user = await User.findOne({email});
+        if (!user){
+            return res.status(400).json({error:"Input Wrong Credentials"});
+        }
+
+        // check password:
+        const passwordCompare = await bcrypt.compare(password, user.password);
+        if (!passwordCompare){
+            return res.status(400).json({error:"Input Wrong Credentials"});
+        }
+
+        // Generate Json Web Token:
+        const payload = {
+            user:{
+                id: user.id
+            } 
+        }
+        const authToken = jwt.sign(payload, JWT_SECRET);
+        res.json({authToken, password});
+
+    }catch(error){
+        console.error(error.message);
+        res.status(500).send("Some error accured");
+    }
+ 
+})
+
+
+// ROUTE 3: Create a login using: POST "/api/auth/loginuser" . Doesn't require authentication
+
 
 module.exports = router;
