@@ -2,10 +2,14 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const { body, validationResult } = require('express-validator');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
+// Signature:
+const JWT_SECRET = "Iam$Foxy"
 
-// Create a User using: POST "/api/auth/" . Doesn't require authentication
-router.post('/', [
+// Create a User using: POST "/api/auth/user" . Doesn't require authentication
+router.post('/user', [
         body('name', 'Enter valid name').notEmpty().isLength({ min: 3}),
         body('email', 'Enter valid email address').notEmpty().isEmail(),
         body('password', 'Enter password minimum 5 characters').notEmpty().isLength({ min: 5})
@@ -17,24 +21,34 @@ router.post('/', [
         res.send({ errors: result.array() });    
     }
 
-    // Check whether the user with this email already exist:
     try{
-            let user = await User.findOne({email: req.body.email});
-            if (user){
+        // Check whether the user with this email already exist:
+        let user = await User.findOne({email: req.body.email});
+        if (user){
             return res.status(400).json({error:"Sorry a user already exists"});
         }
+        
+        // Hashing Password:
+        const salt = await bcrypt.genSalt(10);
+        secretPassword = await bcrypt.hash(req.body.password, salt);
+
+        // if (user) = false, then user create:
         user = await User.create({
             name: req.body.name,
             email: req.body.email,
-            password: req.body.password,
+            password: secretPassword,
         })
+        
+        // Generate Json Web Token:
+        const data = {
+          user:{
+            id: user.id
+          }
+        } 
+        const authToken = jwt.sign(data, JWT_SECRET);
+        res.json({authToken});
+        // res.json(user);
 
-        // .then(user => res.json(user))
-        // .catch(err => {
-        //     console.log(err);
-        //     res.json({error: 'Please Enter a unique value for email'});
-        // });
-        res.json(user);
     } catch(error) {
         console.error(error.message);
         res.status(500).send("Some error accured");
