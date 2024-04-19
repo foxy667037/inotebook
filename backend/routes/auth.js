@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const fetchuser = require("../middleware/fetchuser");
 
 // Signature:
-const JWT_SECRET = "Iam$Foxy";
+const JWT_SECRET = "Iam@Foxy";
 
 // ROUTE 1: Create a User using: POST "/api/auth/createuser" . Doesn't require authentication
 router.post(
@@ -75,7 +75,7 @@ router.post(
       return res.status(400).json({ error: errors.array() });
     }
 
-    // decrypt email and password
+    // decrypt email and password from body
     const { email, password } = req.body;
 
     try {
@@ -121,6 +121,29 @@ router.post(
       userId = req.user.id;
       const user = await User.findById(userId).select("-password");
       res.send(user);
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).send("Some error accured");
+    }
+  }
+);
+
+
+// ROUTE 4: Delete a user details using: DELETE "/api/auth/deleteuser" . Doesn't require authentication
+router.delete(
+  "/deleteuser/:id",
+  fetchuser,
+  async (req, res) => {
+    try {
+
+      userId = req.params.id;
+      // find user using userId:
+      let user = await User.findById(userId);
+
+      // Delete a user:
+      user = await User.findByIdAndDelete(userId);
+      res.json("Successfully: User has been deleted");
+
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Some error accured");
