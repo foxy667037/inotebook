@@ -9,6 +9,8 @@ import {
   Route,
 } from "react-router-dom";
 import NoteState from './context/notes/NoteState';
+import Alert from './components/Alert';
+
 
 
 const App = () => {
@@ -17,6 +19,7 @@ const App = () => {
       <NoteState>
         <BrowserRouter>
           <Navbar/>
+          <Alert message="This is good react course"/>
           <Routes>  
             <Route exact path='/' element={<Home/>}></Route>
             <Route exact path='/about' element={<About/>}></Route>
