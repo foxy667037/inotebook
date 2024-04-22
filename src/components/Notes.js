@@ -1,6 +1,7 @@
 import React , {useContext} from 'react';
 import noteContext from '../context/notes/noteContext';
 import Noteitems from './Noteitems';
+import AddNote from './AddNote';
 
 const Notes = () => {
     
@@ -8,12 +9,15 @@ const Notes = () => {
   const {notes, setnotes} = context;
 
   return (
-    <div className='row my-2'>
-       <h3>Your notes</h3>
-        {notes.map((note)=> {
-          return <Noteitems key={note._id} note={note} />;
-        })}
-    </div>
+    <>
+      <AddNote/>
+      <div className='row my-2'>
+        <h3>Your notes</h3>
+          {notes.map((note)=> {
+            return <Noteitems key={note._id} note={note} />;
+          })}
+      </div>
+    </>
   )
 }
 
