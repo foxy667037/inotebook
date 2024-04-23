@@ -16,6 +16,7 @@ const AddNote = () => {
   const handleAddNote = (e) => {
     e.preventDefault();
     addNote(note.title, note.description, note.tag);
+    setNote({title: "", description: "", tag: "" });
   };
 
   // function to change description or title while typing:
@@ -37,8 +38,11 @@ const AddNote = () => {
             className="form-control"
             id="title"
             name="title"
+            value={note.title}
             aria-describedby="emailHelp"
             onChange={onChange}
+            minLength={5}
+            required
           />
         </div>
         <div className="mb-3">
@@ -48,9 +52,12 @@ const AddNote = () => {
           <input
             type="text"
             name="description"
+            value={note.description}
             className="form-control"
             id="description"
             onChange={onChange}
+            minLength={5}
+            required
           />
         </div>
         <div className="mb-3">
@@ -60,6 +67,7 @@ const AddNote = () => {
           <input
             type="text"
             name="tag"
+            value={note.tag}
             className="form-control"
             id="tag"
             onChange={onChange}
@@ -69,6 +77,7 @@ const AddNote = () => {
           type="submit"
           className="btn btn-primary"
           onClick={handleAddNote}
+          disabled={note.title.length < 5 || note.description.length < 5}
         >
           Add Note
         </button>

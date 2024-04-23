@@ -25,6 +25,7 @@ const NoteState = (props) => {
     console.log(json);
     // set state:
     setnotes(json);
+
   };
 
   // Add a note:
@@ -43,31 +44,21 @@ const NoteState = (props) => {
       // body data type must match "Content-Type" header
       body: JSON.stringify({ title, description, tag }),
     });
-    // parses JSON response into native JavaScript objects
-    const json = response.json();
-    console.log(json);
-
-    const note = {
-      "_id": "66228665eadcca454e9ee6155f",
-      "user": "6622857aeadcca4e9ee61548",
-      "title": title,
-      "description": description,
-      "tag": tag,
-      "date": 1713538661241,
-      "__v": 0,
-    };
-
+    
     // state that concatinate the note wih notes state:
+    const note = await response.json();
     setnotes(notes.concat(note));
+
   };
 
+  
   // Edit a note:
   const editNote = async (id, title, description, tag) => {
     //API call:
     const url = `/api/note/updatenotes/${id}`;
     const response = await fetch(`${host}${url}`, {
       // *GET, POST, PUT, DELETE, etc.
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         "auth-token":
@@ -78,19 +69,22 @@ const NoteState = (props) => {
       body: JSON.stringify({ title, description, tag }),
     });
     // parses JSON response into native JavaScript objects
-    const json = response.json();
-    console.log(json);
+    const json = await response.json();
+    console.log(json)
 
+    let newNotes =  JSON.parse(JSON.stringify(notes))
     // logic to edit a note:
-    for (let index = 0; index < notes.length; index++) {
-      const element = notes[index];
-
+    for (let index = 0; index < newNotes.length; index++) {
+      const element = newNotes[index];
       if (element._id === id) {
-        element.title = title;
-        element.description = description;
-        element.tag = tag;
+        newNotes[index].title = title;
+        newNotes[index].description = description;
+        newNotes[index].tag = tag;
+        break;
       }
     }
+    setnotes(newNotes);
+
   };
 
   // Delete a note:
@@ -109,7 +103,7 @@ const NoteState = (props) => {
       // body data type must match "Content-Type" header
       body: JSON.stringify({ title, description, tag }),
     });
-    const json = response.json();
+    const json = await response.json();
     console.log(json);
 
     console.log("deleting note with id " + id);
@@ -121,6 +115,7 @@ const NoteState = (props) => {
 
     // state that delete the note wih notes state:
     setnotes(newNotes);
+
   };
 
   return (
