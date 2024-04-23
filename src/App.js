@@ -10,6 +10,8 @@ import {
 } from "react-router-dom";
 import NoteState from './context/notes/NoteState';
 import Alert from './components/Alert';
+import Signup from './components/Signup';
+import Login from './components/Login';
 
 
 
@@ -22,6 +24,8 @@ const App = () => {
           <Alert message="This is good react course"/>
           <Routes>  
             <Route exact path='/' element={<Home/>}></Route>
+            <Route exact path='/login' element={<Login/>}></Route>
+            <Route exact path='/signup' element={<Signup/>}></Route>
             <Route exact path='/about' element={<About/>}></Route>
           </Routes>
         </BrowserRouter>
