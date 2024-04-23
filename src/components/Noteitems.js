@@ -2,15 +2,13 @@ import React, { useContext } from "react";
 import noteContext from "../context/notes/noteContext";
 
 const Noteitems = (props) => {
-  // dcrypt note from NoteState.js  
-  const { note } = props;
+  // dcrypt note from NoteState.js
+  const { note, updateNote } = props;
 
   const context = useContext(noteContext);
 
   // dcrypt deleteNote from NoteState.js
   const { deleteNote } = context;
-
-  const { editNote } = context;
 
   return (
     <div className="col-md-3 my-2">
@@ -24,9 +22,12 @@ const Noteitems = (props) => {
                 deleteNote(note._id);
               }}
             ></i>
-            <i className="fa-regulzar fa-pen-to-square mx-2" onClick={() => {
-                editNote(note._id);
-            }}></i>
+            <i
+              className="fa-regulzar fa-pen-to-square mx-2"
+              onClick={() => {
+                updateNote(note);
+              }}
+            ></i>
           </div>
           <p className="card-text">{note.description}</p>
         </div>
