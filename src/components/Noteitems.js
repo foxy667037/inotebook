@@ -3,7 +3,7 @@ import noteContext from "../context/notes/noteContext";
 
 const Noteitems = (props) => {
   // dcrypt note from NoteState.js
-  const { note, updateNote } = props;
+  const { note, updateNote, showAlert } = props;
 
   const context = useContext(noteContext);
 
@@ -19,7 +19,7 @@ const Noteitems = (props) => {
             <i
               className="fa-solid fa-trash mx-2"
               onClick={() => {
-                deleteNote(note._id);
+                deleteNote(note._id , showAlert("Note Deleted","success"));
               }}
             ></i>
             <i

@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 const Login = (props) => {
 
   const [credentials , setcredentials] = useState({email: "" , password: ""});  
+
+  const {showAlert} = props;
+
   let navigate = useNavigate();
   
 
@@ -24,12 +27,15 @@ const Login = (props) => {
           // Save the auth-token and redirect:
           localStorage.setItem('token' , json.authtoken);
           navigate('/');
+          showAlert("Login Successfully" , "success");
         }
         else{
-          alert("Wrong Credentials:");
+          showAlert("Wrong Credentials" , "danger");
         }
   
   }  
+
+
 
   const onchange = (e) => {
     setcredentials({ ...credentials, [e.target.name]: e.target.value });

@@ -2,12 +2,14 @@ import React, { useContext, useState } from "react";
 import noteContext from "../context/notes/noteContext";
 
 // function to add a note:
-const AddNote = () => {
+const AddNote = (props) => {
   // using context:
   const context = useContext(noteContext);
 
   // decrypt addNote function from noteContext:
   const { addNote } = context;
+
+  const {showAlert} = props;
 
   // using state to add note:
   const [note, setNote] = useState({ title: "", description: "", tag: "" });
@@ -17,6 +19,7 @@ const AddNote = () => {
     e.preventDefault();
     addNote(note.title, note.description, note.tag);
     setNote({title: "", description: "", tag: "" });
+    showAlert("Note Added Successfully" , "success");
   };
 
   // function to change description or title while typing:

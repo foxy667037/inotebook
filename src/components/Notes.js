@@ -3,10 +3,12 @@ import noteContext from "../context/notes/noteContext";
 import Noteitems from "./Noteitems";
 import AddNote from "./AddNote";
 
-const Notes = () => {
+const Notes = (props) => {
   const context = useContext(noteContext);
   // dcrypt notes and getNotes:
   const { notes, getNotes, editNote } = context;
+
+  const {showAlert} = props;
 
   // useEffect to change notes:
   useEffect(() => {
@@ -32,6 +34,7 @@ const Notes = () => {
     console.log("note update", note);
     editNote(note.id, note.etitle, note.edescription, note.etag);
     refClose.current.click();
+    showAlert("Note Updated","success");
     // addNote(note.title, note.description, note.tag);
   };
 
@@ -43,7 +46,7 @@ const Notes = () => {
 
   return (
     <>
-      <AddNote />
+      <AddNote showAlert={showAlert}/>
       <button
         ref={ref}
         type="button"
@@ -149,7 +152,7 @@ const Notes = () => {
         </div>
         {notes.map((note) => {
           return (
-            <Noteitems key={note._id} note={note} updateNote={updateNote} />
+            <Noteitems key={note._id} note={note} updateNote={updateNote} showAlert={showAlert}/>
           );
         })}
       </div>
