@@ -9,6 +9,8 @@ const fetchuser = require("../middleware/fetchuser");
 // Signature:
 const JWT_SECRET = "Iam@Foxy";
 
+
+
 // ROUTE 1: Create a User using: POST "/api/auth/createuser" . Doesn't require authentication
 router.post(
   "/createuser",
@@ -59,6 +61,8 @@ router.post(
   }
 );
 
+
+
 // ROUTE 2: Authenticate a user to login using: POST "/api/auth/loginuser" . Doesn't require authentication
 router.post(
   "/loginuser",
@@ -69,6 +73,7 @@ router.post(
       .isLength({ min: 5 }),
   ],
   async (req, res) => {
+    let success = false;
     // If there are errors, Return bad request:
     const result = validationResult(req);
     if (!result.isEmpty()) {
@@ -82,13 +87,15 @@ router.post(
       // check email:
       let user = await User.findOne({ email });
       if (!user) {
+        success = false;
         return res.status(400).json({ error: "Input Wrong Credentials" });
       }
 
       // check password:
       const passwordCompare = await bcrypt.compare(password, user.password);
       if (!passwordCompare) {
-        return res.status(400).json({ error: "Input Wrong Credentials" });
+        success = false;
+        return res.status(400).json({ success , error: "Input Wrong Credentials" });
       }
 
       // Generate Json Web Token:
@@ -97,14 +104,18 @@ router.post(
           id: user.id,
         },
       };
+
       const authToken = jwt.sign(payload, JWT_SECRET);
-      res.json({ authToken, password });
+      success = true;
+      res.json({ success , authToken, password });
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Some error accured");
     }
   }
 );
+
+
 
 // ROUTE 3: Get loggedin  user details using: POST "/api/auth/getuser" . Doesn't require authentication
 router.post(
@@ -120,13 +131,16 @@ router.post(
     try {
       userId = req.user.id;
       const user = await User.findById(userId).select("-password");
+      success = true;
       res.send(user);
     } catch (error) {
       console.error(error.message);
+      success = false;
       res.status(500).send("Some error accured");
     }
   }
 );
+
 
 
 // ROUTE 4: Delete a user details using: DELETE "/api/auth/deleteuser" . Doesn't require authentication
