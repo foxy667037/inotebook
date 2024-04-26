@@ -27,9 +27,9 @@ const Signup = (props) => {
 
         if(json.success){
           // Save the auth-token and redirect:
-          localStorage.setItem('token' , json.authtoken);
-          navigate('/');
+          localStorage.setItem('token' , json.authToken);
           showAlert("Signup Successfully" , "success");
+          navigate('/');
         }
         else{
           showAlert("Wrong Credentials" , "danger");
